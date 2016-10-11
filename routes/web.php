@@ -15,6 +15,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// practice routes
+Route::get('/practice', 'PracticeController@index')->name('practice.index');
+for($i = 0; $i < 100; $i++) {
+    Route::get('/practice/'.$i, 'PracticeController@example'.$i)->name('practice.example'.$i);
+}
+
+// book resource
 Route::get('/books', 'BookController@index')->name('books.index');
 Route::get('/books/create', 'BookController@create')->name('books.create');
 Route::post('/books', 'BookController@store')->name('books.store');
