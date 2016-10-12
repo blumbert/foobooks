@@ -48,12 +48,12 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $title
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($title)
     {
-        //
+        return view('book.show')->with('title', $title);
     }
 
     /**

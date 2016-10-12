@@ -6,8 +6,15 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use Rych\Random\Random;
+
 class PracticeController extends Controller
 {
+
+    public function example1() {
+        $random = new Random();
+        return $random->getRandomString(8);
+    }
     /**
     * Display an index of all available index methods
     */
