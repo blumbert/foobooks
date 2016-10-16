@@ -25,13 +25,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        $view = '<form action="/books/create" method="POST">';
-        $view .= csrf_field();
-        $view .= '<input type="text" name="title">';
-        $view .= '<input type="submit">';
-        $view .= '</form>';
-
-        return $view;
+        return view('book.create');
     }
 
     /**
