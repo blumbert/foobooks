@@ -8,6 +8,7 @@
 
     <meta charset='utf-8'>
     <link href="/css/foobooks.css" type='text/css' rel='stylesheet'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' rel='stylesheet'>
 
     {{-- Yield any page specific CSS files or anything else you might want in the <head> --}}
     @yield('head')
@@ -21,6 +22,13 @@
         style='width:300px'
         alt='Foobooks Logo'>
     </header>
+
+    <nav>
+        <ul class="nav nav-pills">
+            <li><a href='/books'>View all books</a></li>
+            <li><a href='/books/create'>Add a new book</a></li>
+        </ul>
+    </nav>
 
     <section>
         {{-- Main page content will be yielded here --}}

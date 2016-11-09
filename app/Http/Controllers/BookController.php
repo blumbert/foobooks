@@ -36,7 +36,13 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate
+        $this->validate($request, [
+            'title' => 'required|min:3',
+
+        ]);
+
+        return \Redirect::to('/books/create');
     }
 
     /**

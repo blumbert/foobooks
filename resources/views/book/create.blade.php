@@ -1,36 +1,32 @@
 @extends('layouts.master')
 
+@section('title', 'Add a new book');
 
-@section('title')
-    Add Book
-@stop
-
-
-{{--
-This `head` section will be yielded right before the closing </head> tag.
-Use it to add specific things that *this* View needs in the head,
-such as a page specific stylesheets.
---}}
 @section('head')
     <link href="/css/books/create.css" type='text/css' rel='stylesheet'>
-@stop
+@endsection
 
 
 @section('content')
-    <form method="post">
+    <h1>Add a new book</h1>
+    <form method="post" action="/books">
+        {{ csrf_field() }}
         <label for="f_title">Title: </label>
-        <input id="f_title" type="text" name="title"><br>
-        <label for="f_author">Author: </label>
-        <input id="f_author" type="text" name="author">
+        <input id="f_title" type="text" name="title" value="{{ old('title') }}">
+        <input type="submit" name="submit" value="Add new book">
+
+        @if(count($errors) > 0)
+            <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        @endif
+
     </form>
-@stop
+@endsection
 
 
-{{--
-This `body` section will be yielded right before the closing </body> tag.
-Use it to add specific things that *this* View needs at the end of the body,
-such as a page specific JavaScript files.
---}}
 @section('body')
     <script src="/js/books/create.js"></script>
-@stop
+@endsection
