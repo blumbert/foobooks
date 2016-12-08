@@ -16,6 +16,10 @@
 </head>
 <body>
 
+    @if(Session::get('flash_message') != null)
+        <div class='flash_message'>{{ Session::get('flash_message') }}</div>
+    @endif
+
     <header>
         <img
         src='http://making-the-internet.s3.amazonaws.com/laravel-foobooks-logo@2x.png'

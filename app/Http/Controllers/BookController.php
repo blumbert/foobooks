@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use App\Book;
+use App\Author;
+use App\Tag;
+
+use Session;
+
 class BookController extends Controller
 {
     /**
@@ -15,7 +21,10 @@ class BookController extends Controller
      */
     public function index()
     {
-        return "Hi from the book controller!";
+        $books = Book::all();
+
+        return view('book.index')->with(['books' => $books]);
+
     }
 
     /**
@@ -38,11 +47,25 @@ class BookController extends Controller
     {
         // validate
         $this->validate($request, [
-            'title' => 'required|min:3',
+            'title'         => 'required|min:3',
+            'published'     => 'required|min:4|numeric',
+            'cover'         => 'required|url',
+            'purchase_link' => 'required|url'
 
         ]);
 
-        return \Redirect::to('/books/create');
+        $book = new Book();
+        $book->title         = $request->input('title');
+        $book->published     = $request->input('published');
+        $book->cover         = $request->input('cover');
+        $book->purchase_link = $request->input('purchase_link');
+
+        // add book to db
+        $book->save();
+
+
+        Session::flash('flash_message', 'Your book '.$book->title.' was added.');
+        return redirect('/books');
     }
 
     /**
@@ -51,7 +74,7 @@ class BookController extends Controller
      * @param  string  $title
      * @return \Illuminate\Http\Response
      */
-    public function show($title)
+    public function show($id)
     {
         return view('book.show')->with('title', $title);
     }
@@ -64,7 +87,35 @@ class BookController extends Controller
      */
     public function edit($id)
     {
-        //
+        $book = Book::find($id);
+
+        // get authors
+        $authors = Author::orderBy('last_name', 'ASC')->get();
+
+        // get author info for dropdown
+        $authors_for_dropdown = [];
+        foreach ($authors as $author) {
+            $authors_for_dropdown[$author->id] = $author->last_name;
+        }
+
+        // get tags
+        $tags = Tag::orderBy('name', 'ASC')->get();
+        $tags_for_checkboxes = [];
+        foreach ($tags as $tag) {
+            $tags_for_checkboxes[$tag->id] = $tag->name;
+        }
+
+        // just the tags for this book
+        $tags_for_this_book = [];
+        foreach ($book->tags as $tag) {
+            $tags_for_this_book[] = $tag->name;
+        }
+        return view('book.edit')->with([
+            'book' => $book,
+            'authors_for_dropdown' => $authors_for_dropdown,
+            'tags_for_checkboxes' => $tags_for_checkboxes,
+            'tags_for_this_book'  => $tags_for_this_book
+        ]);
     }
 
     /**
@@ -76,7 +127,43 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        // validate
+        $this->validate($request, [
+            'title'         => 'required|min:3',
+            'published'     => 'required|min:4|numeric',
+            'cover'         => 'required|url',
+            'purchase_link' => 'required|url'
+
+        ]);
+
+        $book = Book::find($request->id);
+        $book->title         = $request->title;
+        $book->cover         = $request->cover;
+        $book->published     = $request->published;
+        $book->author_id     = $request->author_id;
+        $book->purchase_link = $request->purchase_link;
+
+        $book->save();
+
+        # If there were tags selected...
+        if($request->tags) {
+            $tags = $request->tags;
+        }
+        # If there were no tags selected (i.e. no tags in the request)
+        # default to an empty array of tags
+        else {
+            $tags = [];
+        }
+
+        # Above if/else could be condensed down to this: $tags = ($request->tags) ?: [];
+
+        # Sync tags
+        $book->tags()->sync($tags);
+        $book->save();
+
+        Session::flash('flash_message', 'Your changes to '.$book->title.' were saved.');
+        return redirect('/books');
     }
 
     /**

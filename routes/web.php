@@ -22,13 +22,20 @@ for($i = 0; $i < 100; $i++) {
 }
 
 // book resource
+# Index page to show all the books
 Route::get('/books', 'BookController@index')->name('books.index');
+# Show a form to create a new book
 Route::get('/books/create', 'BookController@create')->name('books.create');
+# Process the form to create a new book
 Route::post('/books', 'BookController@store')->name('books.store');
-Route::get('/books/{book}', 'BookController@show')->name('books.show');
-Route::get('/books/{book}/edit', 'BookController@edit')->name('books.edit');
-Route::put('/books/{book}', 'BookController@update')->name('books.update');
-Route::delete('/books/{book}', 'BookController@destroy')->name('books.destroy');
+# Show an individual book
+Route::get('/books/{title}', 'BookController@show')->name('books.show');
+# Show form to edit a book
+Route::get('/books/{id}/edit', 'BookController@edit')->name('books.edit');
+# Process form to edit a book
+Route::put('/books/{id}', 'BookController@update')->name('books.update');
+# Delete a book
+Route::delete('/books/{title}', 'BookController@destroy')->name('books.destroy');
 
 Route::get('/debug', function() {
 
@@ -62,5 +69,17 @@ Route::get('/debug', function() {
     }
 
     echo '</pre>';
-
 });
+
+// delete and recreate foobooks db
+if(App::environment('local')) {
+
+    Route::get('/drop', function() {
+
+        DB::statement('DROP database foobooks');
+        DB::statement('CREATE database foobooks');
+
+        return 'Dropped foobooks; created foobooks.';
+    });
+
+};
